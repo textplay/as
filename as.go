@@ -9,6 +9,18 @@ import "regexp"
 func Dummy() {
 }
 
+func Clone1(ss []string) []string {
+	return append([]string(nil), ss...)
+}
+
+func Clone2(sss [][]string) [][]string {
+	var result [][]string
+	for _, ss := range sss {
+		result = append(result, Clone1(ss))
+	}
+	return result
+}
+
 func Map(ss []string, f func(string) (string, error)) ([]string, error) {
 	result := make([]string, len(ss))
 	for i, s := range ss {
@@ -26,9 +38,40 @@ func MustMap(ss []string, f func(string) string) []string {
 	return result
 }
 
+func Equal(ss1 []string, ss2 []string) bool {
+	if ss1 == nil || ss2 == nil {
+		return false
+	}
+	if len(ss1) != len(ss2) {
+		return false
+	}
+	for i, _ := range ss1 {
+		if ss1[i] != ss2[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func HasPrefix(ss []string, prefix []string) bool {
+	if len(ss) < len(prefix) {
+		return false
+	}
+	return Equal(ss[0:len(prefix)], prefix)
+}
+
 func IndexOf(ss []string, elem string) int {
 	for i, s := range ss {
 		if s == elem {
+			return i
+		}
+	}
+	return -1
+}
+
+func IndexOfSub(ss []string, sub []string) int {
+	for i := 0; i < len(ss)-len(sub)+1; i++ {
+		if Equal(ss[i:i+len(sub)], sub) {
 			return i
 		}
 	}
@@ -50,6 +93,17 @@ func IndicesOf(ss []string, elem string) []int {
 	for i, s := range ss {
 		if s == elem {
 			result = append(result, i)
+		}
+	}
+	return result
+}
+
+func IndicesOfSub(ss []string, sub []string) []int {
+	var result = make([]int, 0)
+	for i := 0; i < len(ss)-len(sub)+1; i++ {
+		if Equal(ss[i:i+len(sub)], sub) {
+			result = append(result, i)
+			i += len(sub) - 1
 		}
 	}
 	return result
