@@ -33,6 +33,16 @@ func Map(ss []string, f func(string) (string, error)) ([]string, error) {
 	return result, nil
 }
 
+func Filter(ss []string, f func(string) bool) []string {
+	var result = make([]string, 0)
+	for _, s := range ss {
+		if f(s) {
+			result = append(result, s)
+		}
+	}
+	return result
+}
+
 func MustMap(ss []string, f func(string) string) []string {
 	result, _ := Map(ss, func(s string) (string, error) { return f(s), nil })
 	return result
